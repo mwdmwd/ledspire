@@ -1,0 +1,7 @@
+*.o
+*.bin
+*.elf
+*.tmp
+*~
+*.swp
+src/wifi_creds.h

@@ -1,0 +1,42 @@
+<html>
+<head>
+<script>
+var cto = null;
+function chg() {
+	if(cto) {
+		clearTimeout(cto);
+		cto = null;
+	}
+	var adr = `/c?r=${r.value}&g=${g.value}&b=${b.value}`;
+	cto = setTimeout((function(addr) {
+		return function() {
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", addr, true);
+			xhr.send(null);
+			cto = null;
+		}
+	})(adr), 25);
+	preview.style.backgroundColor = `rgb(${r.value}, ${g.value}, ${b.value})`;
+}
+function load() {
+	var x = new XMLHttpRequest();
+	x.open("GET", "/c", true);
+	x.onload = function() {
+		preview.style.backgroundColor = `rgb(${x.responseText})`;
+		[0, 1, 2].forEach(function(i) {
+			document.getElementById("rgb"[i]).value = x.responseText.split(',')[i]|0;
+		});
+	}
+	x.send(null);
+}
+document.addEventListener("DOMContentLoaded", load);
+</script>
+</head>
+<body>
+R: <input id="r" type="range" style="width: 100%" min="0" max="255" value="0" onchange="chg()"></input><br/>
+G: <input id="g" type="range" style="width: 100%" min="0" max="255" value="0" onchange="chg()"></input><br/>
+B: <input id="b" type="range" style="width: 100%" min="0" max="255" value="0" onchange="chg()"></input><br/>
+<br/>
+<div id="preview" style="width: 200px; height: 200px">&nbsp;</div>
+</body>
+</html>

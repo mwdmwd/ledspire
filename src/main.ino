@@ -1,0 +1,107 @@
+#include <stdint.h>
+#include <math.h>
+#include <ESP8266WiFi.h>
+#include <ESP8266WebServer.h>
+#include <FS.h>
+#include <ArduinoOTA.h>
+
+#include "wifi_creds.h"
+
+#define RED_PIN 12
+#define GREEN_PIN 13
+#define BLUE_PIN 14
+
+#define SETUP_PIN(pin) do{pinMode(pin, OUTPUT);analogWrite(pin, 0);}while(0);
+
+ESP8266WebServer server(80);
+int r, g, b;
+
+uint16_t gammaCorr8to16(uint8_t val)
+{
+	return (uint16_t)(pow((float)val / 255.f, 2.8f) * 1023 + 0.5);
+}
+
+void setRGB(int nr, int ng, int nb)
+{
+	if(r != nr)
+	{
+		analogWrite(RED_PIN, gammaCorr8to16(nr)); r = nr;
+	}
+	if(g != ng)
+	{
+		analogWrite(GREEN_PIN, gammaCorr8to16(ng)); g = ng;
+	}
+	if(b != nb)
+	{
+		analogWrite(BLUE_PIN, gammaCorr8to16(nb)); b = nb;
+	}
+}
+
+void setup()
+{
+	pinMode(2, OUTPUT); // Onboard LED
+	SETUP_PIN(RED_PIN);
+	SETUP_PIN(GREEN_PIN);
+	SETUP_PIN(BLUE_PIN);
+	setRGB(128, 60, 224);
+	Serial.begin(115200);
+	WiFi.mode(WIFI_STA);
+	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+	while(WiFi.status() != WL_CONNECTED)
+	{
+		delay(50);
+		digitalWrite(2, !digitalRead(2));
+	}
+	digitalWrite(2, 1);
+
+	SPIFFS.begin();
+
+	server.on("/rssi", [](void) {
+		server.send(200, "text/plain", String(WiFi.RSSI()));
+	});
+	
+	server.on("/", [](void) {
+		server.sendHeader("Location", "/index.html");
+		server.send(301);
+	});
+	server.on("/c", [](void) {
+		if(server.args() != 0)
+		{
+			int nr = atoi(server.arg("r").c_str());
+			int ng = atoi(server.arg("g").c_str());
+			int nb = atoi(server.arg("b").c_str());
+			setRGB(nr, ng, nb);
+			server.send(200, "text/plain", "OK");
+		}
+		else
+		{
+			char rbuf[12];
+			snprintf(rbuf, 12, "%u,%u,%u", r, g, b);
+			server.send(200, "text/plain", rbuf);
+		}
+	});
+	
+	server.serveStatic("/", SPIFFS, "/www/");
+	server.begin();
+
+	ArduinoOTA.setHostname("ledspire");
+	ArduinoOTA.begin();
+}
+
+float t = 0.f;
+
+void loop()
+{
+	t += 0.01f;
+	/*
+	int r = ((sinf(t) + 1) / 2) * 1023;
+	int g = ((sinf(t + M_PI_2) + 1) / 2) * 1023;
+	int b = ((sinf(t + 3*M_PI_2) + 1) / 2) * 1023;
+	analogWrite(12, r);
+	analogWrite(13, g);
+	analogWrite(14, b);
+	*/
+	server.handleClient();
+	ArduinoOTA.handle();
+  delay(20);
+}
