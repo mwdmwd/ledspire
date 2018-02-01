@@ -88,20 +88,9 @@ void setup()
 	ArduinoOTA.begin();
 }
 
-float t = 0.f;
-
 void loop()
 {
-	t += 0.01f;
-	/*
-	int r = ((sinf(t) + 1) / 2) * 1023;
-	int g = ((sinf(t + M_PI_2) + 1) / 2) * 1023;
-	int b = ((sinf(t + 3*M_PI_2) + 1) / 2) * 1023;
-	analogWrite(12, r);
-	analogWrite(13, g);
-	analogWrite(14, b);
-	*/
 	server.handleClient();
 	ArduinoOTA.handle();
-  delay(20);
+	delay(20);
 }
