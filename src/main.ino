@@ -51,8 +51,10 @@ void setup()
 	{
 		delay(50);
 		digitalWrite(2, !digitalRead(2));
+		digitalWrite(BLUE_PIN, digitalRead(2));
 	}
 	digitalWrite(2, 1);
+	digitalWrite(BLUE_PIN, 0);
 
 	SPIFFS.begin();
 
