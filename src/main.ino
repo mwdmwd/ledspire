@@ -47,7 +47,7 @@ void setup()
 	Serial.begin(115200);
 	WiFi.mode(WIFI_STA);
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-	// WiFi.setAutoReconnect(true); // Doesn't work. Needs workaround
+	WiFi.setAutoReconnect(true);
 	while(WiFi.status() != WL_CONNECTED)
 	{
 		delay(50);
@@ -98,13 +98,13 @@ void setup()
 
 void loop()
 {
+	while(WiFi.status() != WL_CONNECTED)
+	{
+		delay(50);
+		digitalWrite(2, !digitalRead(2));
+		digitalWrite(BLUE_PIN, digitalRead(2));
+	}
+
 	server.handleClient();
 	ArduinoOTA.handle();
-
-	if((WiFi.status() != WL_CONNECTED || WiFi.localIP()[0] == 0) &&
-	    millis() - lastReconnectMillis >= 10000)
-	{
-		WiFi.reconnect();
-		lastReconnectMillis = millis();
-	}
 }
