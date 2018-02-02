@@ -15,6 +15,7 @@
 
 ESP8266WebServer server(80);
 int r, g, b;
+unsigned long long lastReconnectMillis;
 
 uint16_t gammaCorr8to16(uint8_t val)
 {
@@ -46,7 +47,7 @@ void setup()
 	Serial.begin(115200);
 	WiFi.mode(WIFI_STA);
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-	WiFi.setAutoReconnect(true);
+	// WiFi.setAutoReconnect(true); // Doesn't work. Needs workaround
 	while(WiFi.status() != WL_CONNECTED)
 	{
 		delay(50);
@@ -99,4 +100,11 @@ void loop()
 {
 	server.handleClient();
 	ArduinoOTA.handle();
+
+	if((WiFi.status() != WL_CONNECTED || WiFi.localIP()[0] == 0) &&
+	    millis() - lastReconnectMillis >= 10000)
+	{
+		WiFi.reconnect();
+		lastReconnectMillis = millis();
+	}
 }
