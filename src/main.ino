@@ -46,6 +46,7 @@ void setup()
 	Serial.begin(115200);
 	WiFi.mode(WIFI_STA);
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+	WiFi.setAutoReconnect(true);
 	while(WiFi.status() != WL_CONNECTED)
 	{
 		delay(50);
