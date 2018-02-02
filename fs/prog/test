@@ -1,0 +1,6 @@
+rgb 255 0 0
+wait 1000
+rgb 0 255 0
+wait 1000
+rgb 0 0 255
+wait 1000
