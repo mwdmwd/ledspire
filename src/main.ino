@@ -98,5 +98,4 @@ void loop()
 {
 	server.handleClient();
 	ArduinoOTA.handle();
-	delay(20);
 }
