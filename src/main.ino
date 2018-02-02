@@ -40,10 +40,9 @@ void setRGB(int nr, int ng, int nb)
 void setup()
 {
 	pinMode(2, OUTPUT); // Onboard LED
+	pinMode(BLUE_PIN, OUTPUT); // For blinking
 	SETUP_PIN(RED_PIN);
 	SETUP_PIN(GREEN_PIN);
-	SETUP_PIN(BLUE_PIN);
-	setRGB(128, 60, 224);
 	Serial.begin(115200);
 	WiFi.mode(WIFI_STA);
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -55,6 +54,11 @@ void setup()
 	}
 	digitalWrite(2, 1);
 	digitalWrite(BLUE_PIN, 0);
+
+	SETUP_PIN(RED_PIN);
+	SETUP_PIN(GREEN_PIN);
+	SETUP_PIN(BLUE_PIN);
+	setRGB(128, 60, 224);
 
 	SPIFFS.begin();
 
