@@ -98,11 +98,20 @@ void setup()
 
 void loop()
 {
-	while(WiFi.status() != WL_CONNECTED)
+	if(WiFi.status() != WL_CONNECTED)
 	{
-		delay(50);
-		digitalWrite(2, !digitalRead(2));
-		digitalWrite(BLUE_PIN, digitalRead(2));
+		while(true)
+		{
+			delay(50);
+			digitalWrite(2, !digitalRead(2));
+			digitalWrite(BLUE_PIN, digitalRead(2));
+
+			if(WiFi.status() == WL_CONNECTED) // Going to break out
+			{
+				analogWrite(BLUE_PIN, gammaCorr8to16(b)); // Restore color
+				break;
+			}
+		}
 	}
 
 	server.handleClient();
