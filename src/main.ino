@@ -89,6 +89,41 @@ void setup()
 		}
 	});
 	
+	server.on("/prog", HTTP_GET, [](void) {
+		Dir progDir = SPIFFS.openDir("/prog");
+		String out = "";
+		uint8_t first = 1;
+		while(progDir.next())
+		{
+			if(!first)
+				out += "\n";
+			first = 0;
+			out += &progDir.fileName().c_str()[6]; // Strip /prog/
+		}
+		server.send(200, "text/plain", out);
+	});
+
+	server.on("/prog", HTTP_POST, [](void) {
+		String fileName = server.arg("name");
+		String content = server.arg("plain");
+		if(fileName == "" || content == "") {server.send(500); return;}
+
+		File pf = SPIFFS.open("/prog/" + fileName, "w");
+		if(!pf) {server.send(500); return;}
+		pf.write((const uint8_t*)content.c_str(), content.length());
+		server.send(200);
+	});
+
+	server.on("/prog", HTTP_DELETE, [](void) {
+		String fileName = server.arg("name");
+		if(fileName == "") {server.send(500); return;}
+		if(SPIFFS.remove("/prog/" + fileName))
+			server.send(200);
+		else
+			server.send(500);
+	});
+
+	server.serveStatic("/prog/", SPIFFS, "/prog/");
 	server.serveStatic("/", SPIFFS, "/www/");
 	server.begin();
 
