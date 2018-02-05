@@ -2,9 +2,11 @@
 #include <math.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include <EEPROM.h>
 #include <FS.h>
 #include <ArduinoOTA.h>
 
+#include "conf.h"
 #include "wifi_creds.h"
 
 #define RED_PIN 12
@@ -14,7 +16,6 @@
 #define SETUP_PIN(pin) do{pinMode(pin, OUTPUT);analogWrite(pin, 0);}while(0);
 
 ESP8266WebServer server(80);
-int r, g, b;
 unsigned long long lastReconnectMillis;
 
 uint16_t gammaCorr8to16(uint8_t val)
@@ -24,18 +25,25 @@ uint16_t gammaCorr8to16(uint8_t val)
 
 void setRGB(int nr, int ng, int nb)
 {
-	if(r != nr)
+	if(conf.r != nr)
 	{
-		analogWrite(RED_PIN, gammaCorr8to16(nr)); r = nr;
+		analogWrite(RED_PIN, gammaCorr8to16(nr)); conf.r = nr;
 	}
-	if(g != ng)
+	if(conf.g != ng)
 	{
-		analogWrite(GREEN_PIN, gammaCorr8to16(ng)); g = ng;
+		analogWrite(GREEN_PIN, gammaCorr8to16(ng)); conf.g = ng;
 	}
-	if(b != nb)
+	if(conf.b != nb)
 	{
-		analogWrite(BLUE_PIN, gammaCorr8to16(nb)); b = nb;
+		analogWrite(BLUE_PIN, gammaCorr8to16(nb)); conf.b = nb;
 	}
+}
+
+void restoreRGB(void)
+{
+	analogWrite(RED_PIN, gammaCorr8to16(conf.r));
+	analogWrite(GREEN_PIN, gammaCorr8to16(conf.g));
+	analogWrite(BLUE_PIN, gammaCorr8to16(conf.b));
 }
 
 void setup()
@@ -64,7 +72,13 @@ void setup()
 	SETUP_PIN(RED_PIN);
 	SETUP_PIN(GREEN_PIN);
 	SETUP_PIN(BLUE_PIN);
-	setRGB(128, 60, 224);
+
+	EEPROM.begin(CONF_SIZE);
+	if(confValid())
+		confRead();
+	else
+		confWrite();
+	restoreRGB();
 
 	SPIFFS.begin();
 
@@ -88,7 +102,7 @@ void setup()
 		else
 		{
 			char rbuf[12];
-			snprintf(rbuf, 12, "%u,%u,%u", r, g, b);
+			snprintf(rbuf, 12, "%u,%u,%u", conf.r, conf.g, conf.b);
 			server.send(200, "text/plain", rbuf);
 		}
 	});
@@ -151,7 +165,7 @@ void loop()
 
 			if(WiFi.status() == WL_CONNECTED) // Going to break out
 			{
-				analogWrite(BLUE_PIN, gammaCorr8to16(b)); // Restore color
+				restoreRGB(); // Restore color
 				break;
 			}
 		}
@@ -159,4 +173,5 @@ void loop()
 
 	server.handleClient();
 	ArduinoOTA.handle();
+	confUpdate();
 }

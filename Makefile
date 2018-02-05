@@ -11,5 +11,5 @@ SKETCH=src/main.ino
 FS_DIR=fs/
 
 A=${ESP_ROOT}/libraries/
-LIBS=$AESP8266WiFi $AArduinoOTA $AESP8266mDNS $AESP8266WebServer
+LIBS=$AESP8266WiFi $AArduinoOTA $AESP8266mDNS $AESP8266WebServer $AEEPROM
 include makeEspArduino/makeEspArduino.mk
