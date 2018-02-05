@@ -48,6 +48,7 @@ void setup()
 	WiFi.mode(WIFI_STA);
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 	WiFi.setAutoReconnect(false);
+	WiFi.setSleepMode(WIFI_NONE_SLEEP);
 	while(WiFi.status() != WL_CONNECTED)
 	{
 		delay(50);
