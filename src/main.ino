@@ -53,6 +53,9 @@ void setup()
 		delay(50);
 		digitalWrite(2, !digitalRead(2));
 		digitalWrite(BLUE_PIN, digitalRead(2));
+
+		if(millis() >= 30000) // Waited 30s and no connection...
+			ESP.reset(); // Give up and restart
 	}
 	digitalWrite(2, 1);
 	digitalWrite(BLUE_PIN, 0);
