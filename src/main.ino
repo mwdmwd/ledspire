@@ -114,6 +114,7 @@ void setup()
 		File pf = SPIFFS.open("/prog/" + fileName, "w");
 		if(!pf) {server.send(500); return;}
 		pf.write((const uint8_t*)content.c_str(), content.length());
+		pf.close();
 		server.send(200);
 	});
 
