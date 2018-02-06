@@ -8,6 +8,7 @@
 
 #include "rgb.h"
 #include "conf.h"
+#include "interp.h"
 #include "wifi_creds.h"
 
 ESP8266WebServer server(80);
@@ -110,6 +111,32 @@ void setup()
 			server.send(500);
 	});
 
+	server.on("/progctl", [](void) {
+		String act = server.arg("act");
+		if(act == "stop") // Otherwise, "start" is assumed.
+		{
+			stopProgram();
+			restoreRGB();
+			server.send(200);
+			return;
+		}
+		String name = server.arg("name");
+		if(name == "")
+			server.send(500);
+		name = "/prog/" + name;
+		if(!loadProgram(name.c_str()))
+		{
+			server.send(501);
+			return;
+		}
+		if(!startProgram())
+		{
+			server.send(502);
+			return;
+		}
+		server.send(200);
+	});
+
 	server.serveStatic("/prog/", SPIFFS, "/prog/");
 	server.serveStatic("/", SPIFFS, "/www/");
 	server.begin();
@@ -138,6 +165,8 @@ void loop()
 			}
 		}
 	}
+
+	interpUpdate();
 
 	server.handleClient();
 	ArduinoOTA.handle();
