@@ -76,6 +76,12 @@ void setup()
 		}
 	});
 	
+	server.on("/dc", [](void) {
+		char rbuf[12];
+		snprintf(rbuf, 12, "%u,%u,%u", r, g, b);
+		server.send(200, "text/plain", rbuf);
+	});
+
 	server.on("/prog", HTTP_GET, [](void) {
 		Dir progDir = SPIFFS.openDir("/prog");
 		String out = "";
