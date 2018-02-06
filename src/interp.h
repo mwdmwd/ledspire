@@ -2,6 +2,7 @@
 #define INTERP_H_
 
 #define MAX_PROG_LEN 1500
+#define MAX_LINE_LEN 32
 
 struct interpState
 {

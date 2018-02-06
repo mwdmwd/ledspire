@@ -39,7 +39,7 @@ void stopProgram(void)
 
 void interpUpdate(void)
 {
-	char interpLine[25];
+	char interpLine[MAX_LINE_LEN];
 	if(!state.running || !state.prog[0] || state.pc == -1)
 		return;
 
@@ -48,7 +48,7 @@ void interpUpdate(void)
 
 	char *beg = &state.prog[state.pc];
 	int lineLen = strcspn(beg, "\n");
-	if(!lineLen)
+	if(!lineLen || lineLen > MAX_LINE_LEN)
 		goto out;
 
 	strncpy(interpLine, beg, lineLen);
