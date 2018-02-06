@@ -6,45 +6,12 @@
 #include <FS.h>
 #include <ArduinoOTA.h>
 
+#include "rgb.h"
 #include "conf.h"
 #include "wifi_creds.h"
 
-#define RED_PIN 12
-#define GREEN_PIN 13
-#define BLUE_PIN 14
-
-#define SETUP_PIN(pin) do{pinMode(pin, OUTPUT);analogWrite(pin, 0);}while(0);
-
 ESP8266WebServer server(80);
 unsigned long long lastReconnectMillis;
-
-uint16_t gammaCorr8to16(uint8_t val)
-{
-	return (uint16_t)(pow((float)val / 255.f, 2.8f) * 1023 + 0.5);
-}
-
-void setRGB(int nr, int ng, int nb)
-{
-	if(conf.r != nr)
-	{
-		analogWrite(RED_PIN, gammaCorr8to16(nr)); conf.r = nr;
-	}
-	if(conf.g != ng)
-	{
-		analogWrite(GREEN_PIN, gammaCorr8to16(ng)); conf.g = ng;
-	}
-	if(conf.b != nb)
-	{
-		analogWrite(BLUE_PIN, gammaCorr8to16(nb)); conf.b = nb;
-	}
-}
-
-void restoreRGB(void)
-{
-	analogWrite(RED_PIN, gammaCorr8to16(conf.r));
-	analogWrite(GREEN_PIN, gammaCorr8to16(conf.g));
-	analogWrite(BLUE_PIN, gammaCorr8to16(conf.b));
-}
 
 void setup()
 {
@@ -97,6 +64,7 @@ void setup()
 			int ng = atoi(server.arg("g").c_str());
 			int nb = atoi(server.arg("b").c_str());
 			setRGB(nr, ng, nb);
+			saveRGB();
 			server.send(200, "text/plain", "OK");
 		}
 		else
