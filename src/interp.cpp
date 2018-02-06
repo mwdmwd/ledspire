@@ -29,6 +29,7 @@ bool startProgram(void)
 		return false;
 	state.running = true;
 	state.pc = 0;
+	memset(&state.delay, 0, sizeof(state.delay));
 	return true;
 }
 
