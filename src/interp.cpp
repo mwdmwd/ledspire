@@ -43,6 +43,9 @@ void interpUpdate(void)
 	if(!state.running || !state.prog[0] || state.pc == -1)
 		return;
 
+	if(state.delay.delaying && state.delay.endMillis > millis())
+		return;
+
 	char *beg = &state.prog[state.pc];
 	int lineLen = strcspn(beg, "\n");
 	if(!lineLen)
@@ -61,7 +64,8 @@ void interpUpdate(void)
 	{
 		int time;
 		sscanf(interpLine, "wait %d", &time);
-		delay(time);
+		state.delay.delaying = true;
+		state.delay.endMillis = millis() + time;
 	}
 
 

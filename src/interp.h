@@ -9,6 +9,12 @@ struct interpState
 	char prog[MAX_PROG_LEN];
 	int progLen;
 	int pc;
+
+	struct
+	{
+		bool delaying;
+		unsigned long endMillis;
+	} delay;
 };
 
 bool loadProgram(const char *name);
