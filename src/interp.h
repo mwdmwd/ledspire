@@ -16,6 +16,15 @@ struct interpState
 		bool delaying;
 		unsigned long endMillis;
 	} delay;
+
+	struct
+	{
+		bool fading;
+		int r0, g0, b0;
+		int r1, g1, b1;
+		unsigned long t0;
+		int dt;
+	} fade;
 };
 
 bool loadProgram(const char *name);

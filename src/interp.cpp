@@ -30,6 +30,7 @@ bool startProgram(void)
 	state.running = true;
 	state.pc = 0;
 	memset(&state.delay, 0, sizeof(state.delay));
+	memset(&state.fade, 0, sizeof(state.fade));
 	return true;
 }
 
@@ -46,6 +47,24 @@ void interpUpdate(void)
 
 	if(state.delay.delaying && state.delay.endMillis > millis())
 		return;
+
+	if(state.fade.fading)
+	{
+		int tx = millis() - state.fade.t0;
+		if(tx >= state.fade.dt)
+		{
+			setRGB(state.fade.r1, state.fade.g1, state.fade.b1);
+			state.fade.fading = false;
+		}
+		else
+		{
+			int nr = state.fade.r0 + (state.fade.r1-state.fade.r0)*tx/state.fade.dt;
+			int ng = state.fade.g0 + (state.fade.g1-state.fade.g0)*tx/state.fade.dt;
+			int nb = state.fade.b0 + (state.fade.b1-state.fade.b0)*tx/state.fade.dt;
+			setRGB(nr, ng, nb);
+			return; // Avoid advancing to next instruction while fading
+		}
+	}
 
 	char *beg = &state.prog[state.pc];
 	int lineLen = strcspn(beg, "\n");
@@ -67,6 +86,18 @@ void interpUpdate(void)
 		sscanf(interpLine, "wait %d", &time);
 		state.delay.delaying = true;
 		state.delay.endMillis = millis() + time;
+	}
+	else if(!strncmp(interpLine, "fade", 4))
+	{
+		state.fade.t0 = millis();
+		if(sscanf(interpLine, "fade %d %d %d %d",
+		          &state.fade.r1, &state.fade.g1, &state.fade.b1,
+		          &state.fade.dt) != 4)
+			goto out;
+		state.fade.r0 = r;
+		state.fade.g0 = g;
+		state.fade.b0 = b;
+		state.fade.fading = true;
 	}
 
 
