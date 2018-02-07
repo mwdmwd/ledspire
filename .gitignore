@@ -5,3 +5,5 @@
 *~
 *.swp
 src/wifi_creds.h
+fs/prog/*
+!fs/prog/rgb
