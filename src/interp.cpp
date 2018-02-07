@@ -91,9 +91,11 @@ static bool runLine(void)
 	else if(!strncmp(interpLine, "wait", 4))
 	{
 		int time;
-		sscanf(interpLine, "wait %d", &time);
-		state.delay.delaying = true;
-		state.delay.endMillis = millis() + time;
+		if(sscanf(interpLine, "wait %d", &time) == 1)
+		{
+			state.delay.delaying = true;
+			state.delay.endMillis = millis() + time;
+		}
 	}
 	else if(!strncmp(interpLine, "fade", 4))
 	{
