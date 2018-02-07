@@ -39,14 +39,22 @@ void stopProgram(void)
 	state.running = false;
 }
 
+static bool runLine(void);
 void interpUpdate(void)
+{
+	int i = MAX_CONSECUTIVE_LINES;
+	while(i-- && !runLine());
+}
+
+/* Returns TRUE if blocked, FALSE if another line can be ran */
+static bool runLine(void)
 {
 	char interpLine[MAX_LINE_LEN];
 	if(!state.running || !state.prog[0] || state.pc == -1)
-		return;
+		return true;
 
 	if(state.delay.delaying && state.delay.endMillis > millis())
-		return;
+		return true;
 
 	if(state.fade.fading)
 	{
@@ -62,7 +70,7 @@ void interpUpdate(void)
 			int ng = state.fade.g0 + (state.fade.g1-state.fade.g0)*tx/state.fade.dt;
 			int nb = state.fade.b0 + (state.fade.b1-state.fade.b0)*tx/state.fade.dt;
 			setRGB(nr, ng, nb);
-			return; // Avoid advancing to next instruction while fading
+			return true; // Avoid advancing to next instruction while fading
 		}
 	}
 
@@ -105,4 +113,5 @@ out:
 	state.pc += lineLen + 1;
 	if(state.pc >= state.progLen)
 		state.pc = 0;
+	return false;
 } 
