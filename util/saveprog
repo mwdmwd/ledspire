@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd fs/prog
+find . -type f -delete # Remove old progs
 # Read last 'line' even if there's no newline at the end
 curl ledspire.local/prog 2>/dev/null | while read name || [ -n "$name" ]; do
 	wget --quiet --show-progress "ledspire.local/prog/$name" -O "$name"
