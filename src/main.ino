@@ -64,6 +64,7 @@ void setup()
 			int nr = atoi(server.arg("r").c_str());
 			int ng = atoi(server.arg("g").c_str());
 			int nb = atoi(server.arg("b").c_str());
+			stopProgram(); // Let the user assume control.
 			setRGB(nr, ng, nb);
 			saveRGB();
 			server.send(200, "text/plain", "OK");
