@@ -1,7 +1,7 @@
 #ifndef INTERP_H_
 #define INTERP_H_
 
-#define MAX_PROG_LEN 1500
+#define MAX_PROG_LEN 2000
 #define MAX_LINE_LEN 32
 #define MAX_CONSECUTIVE_LINES 10
 
