@@ -144,6 +144,10 @@ void setup()
 		server.send(200);
 	});
 
+	server.on("/fh", [](void) {
+		server.send(200, "text/plain", String(ESP.getFreeHeap()));
+	});
+
 	server.serveStatic("/prog/", SPIFFS, "/prog/");
 	server.serveStatic("/", SPIFFS, "/www/");
 	server.begin();
