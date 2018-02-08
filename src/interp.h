@@ -12,6 +12,8 @@ struct interpState
 	int progLen;
 	int pc;
 
+	int regs[10];
+
 	struct
 	{
 		bool delaying;

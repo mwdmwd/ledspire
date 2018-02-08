@@ -31,6 +31,7 @@ bool startProgram(void)
 	state.pc = 0;
 	memset(&state.delay, 0, sizeof(state.delay));
 	memset(&state.fade, 0, sizeof(state.fade));
+	memset(&state.regs, 0, sizeof(state.regs));
 	return true;
 }
 
