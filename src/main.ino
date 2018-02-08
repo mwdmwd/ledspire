@@ -153,6 +153,9 @@ void setup()
 	server.begin();
 
 	ArduinoOTA.setHostname("ledspire");
+	ArduinoOTA.onStart([](void) {
+		SPIFFS.end();
+	});
 	ArduinoOTA.begin();
 }
 
