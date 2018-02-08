@@ -82,6 +82,8 @@ static bool runLine(void)
 
 	strncpy(interpLine, beg, lineLen);
 	interpLine[lineLen] = 0;
+	if(interpLine[0] == ':')
+		goto out; // Label line
 	if(!strncmp(interpLine, "rgb", 3))
 	{
 		int rr, gg, bb;
