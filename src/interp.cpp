@@ -113,6 +113,7 @@ static bool runLine(void)
 		          &state.fade.r1, &state.fade.g1, &state.fade.b1,
 		          &state.fade.dt) == 4)
 		{
+			state.fade.t0 = millis();
 			state.fade.r0 = r;
 			state.fade.g0 = g;
 			state.fade.b0 = b;
