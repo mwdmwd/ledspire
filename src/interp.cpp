@@ -91,13 +91,8 @@ static bool runLine(void)
 	interpLine[lineLen] = 0;
 	if(interpLine[0] == ':')
 		goto out; // Label line
-	if(!strncmp(interpLine, "rgb", 3))
-	{
-		int rr, gg, bb;
-		if(sscanf(interpLine, "rgb %d %d %d", &rr, &gg, &bb) == 3)
-			setRGB(rr, gg, bb);
-	}
-	else if(!strncmp(interpLine, "wait", 4))
+
+	if(!strncmp(interpLine, "wait", 4))
 	{
 		int time;
 		if(sscanf(interpLine, "wait %d", &time) == 1)
@@ -120,6 +115,12 @@ static bool runLine(void)
 			state.fade.fading = true;
 			block = true;
 		}
+	}
+	else if(!strncmp(interpLine, "rgb", 3))
+	{
+		int rr, gg, bb;
+		if(sscanf(interpLine, "rgb %d %d %d", &rr, &gg, &bb) == 3)
+			setRGB(rr, gg, bb);
 	}
 
 out:
