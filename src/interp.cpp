@@ -76,6 +76,7 @@ void interpUpdate(void)
 	while(i-- && !runLine());
 }
 
+#define CMD(name) else if(!strncmp(interpLine, (name), sizeof(name)-1) && (args=&interpLine[sizeof(name)-1]))
 /* Returns TRUE if blocked, FALSE if another line can be ran */
 static bool runLine(void)
 {
@@ -92,19 +93,21 @@ static bool runLine(void)
 	if(interpLine[0] == ':')
 		goto out; // Label line
 
-	if(!strncmp(interpLine, "wait", 4))
+	char *args;
+	if(false); // Dummy
+	CMD("wait")
 	{
 		int time;
-		if(sscanf(interpLine, "wait %d", &time) == 1)
+		if(sscanf(args, " %d", &time) == 1)
 		{
 			state.delay.delaying = true;
 			state.delay.endMillis = millis() + time;
 			block = true;
 		}
 	}
-	else if(!strncmp(interpLine, "fade", 4))
+	CMD("fade")
 	{
-		if(sscanf(interpLine, "fade %d %d %d %d",
+		if(sscanf(args, " %d %d %d %d",
 		          &state.fade.r1, &state.fade.g1, &state.fade.b1,
 		          &state.fade.dt) == 4)
 		{
@@ -116,10 +119,10 @@ static bool runLine(void)
 			block = true;
 		}
 	}
-	else if(!strncmp(interpLine, "rgb", 3))
+	CMD("rgb")
 	{
 		int rr, gg, bb;
-		if(sscanf(interpLine, "rgb %d %d %d", &rr, &gg, &bb) == 3)
+		if(sscanf(args, " %d %d %d", &rr, &gg, &bb) == 3)
 			setRGB(rr, gg, bb);
 	}
 
