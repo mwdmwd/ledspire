@@ -108,8 +108,8 @@ static bool runLine(void)
 
 	strncpy(interpLine, beg, lineLen);
 	interpLine[lineLen] = 0;
-	if(interpLine[0] == ':')
-		goto out; // Label line
+	if(interpLine[0] == ':' || interpLine[1] == '#')
+		goto out; // Label or comment
 
 	char *args;
 	if(false); // Dummy
