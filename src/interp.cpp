@@ -188,7 +188,7 @@ static bool runLine(void)
 	CMD("wait")
 	{
 		int time;
-		if(sscanf(args, " %d", &time) == 1)
+		if(sscanrv(args, "%v", &time) == 1)
 		{
 			state.delay.delaying = true;
 			state.delay.endMillis = millis() + time;
@@ -197,7 +197,7 @@ static bool runLine(void)
 	}
 	CMD("fade")
 	{
-		if(sscanf(args, " %d %d %d %d",
+		if(sscanrv(args, "%v %v %v %v",
 		          &state.fade.r1, &state.fade.g1, &state.fade.b1,
 		          &state.fade.dt) == 4)
 		{
@@ -212,7 +212,7 @@ static bool runLine(void)
 	CMD("rgb")
 	{
 		int rr, gg, bb;
-		if(sscanf(args, " %d %d %d", &rr, &gg, &bb) == 3)
+		if(sscanrv(args, "%v %v %v", &rr, &gg, &bb) == 3)
 			setRGB(rr, gg, bb);
 	}
 
