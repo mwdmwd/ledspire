@@ -29,9 +29,11 @@ bool startProgram(void)
 		return false;
 	state.running = true;
 	state.pc = 0;
+	state.sp = 0;
 	memset(&state.delay, 0, sizeof(state.delay));
 	memset(&state.fade, 0, sizeof(state.fade));
 	memset(&state.regs, 0, sizeof(state.regs));
+	memset(&state.stack, 0, sizeof(state.stack));
 	return true;
 }
 
@@ -74,6 +76,22 @@ void interpUpdate(void)
 
 	int i = MAX_CONSECUTIVE_LINES;
 	while(i-- && !runLine());
+}
+
+void push(int what)
+{
+	if(state.sp < STACK_SIZE - 1)
+		state.stack[++state.sp] = what;
+	else
+		; // TODO stack overflow error
+}
+
+int pop(void)
+{
+	if(state.sp > 0)
+		return state.stack[state.sp--];
+	else
+		; // TODO stack underflow error
 }
 
 #define CMD(name) else if(!strncmp(interpLine, (name), sizeof(name)-1) && (args=&interpLine[sizeof(name)-1]))

@@ -5,14 +5,18 @@
 #define MAX_LINE_LEN 32
 #define MAX_CONSECUTIVE_LINES 10
 
+#define STACK_SIZE 10
+
 struct interpState
 {
 	bool running;
 	char prog[MAX_PROG_LEN];
 	int progLen;
 	int pc;
-
 	int regs[10];
+
+	short sp;
+	int stack[STACK_SIZE];
 
 	struct
 	{
