@@ -1,4 +1,5 @@
 #include "interp.h"
+#include <stdarg.h>
 #include <FS.h>
 #include "rgb.h"
 
@@ -76,6 +77,77 @@ void interpUpdate(void)
 
 	int i = MAX_CONSECUTIVE_LINES;
 	while(i-- && !runLine());
+}
+
+#define VALID_REG(n) (((n)>=0)&&((n)<NUM_REGS))
+int regVal(const char *str)
+{
+	int regNr = 0;
+	if(sscanf(str, " v%d", &regNr) == 1 && VALID_REG(regNr))
+		return state.regs[regNr];
+	else
+		return atoi(str); // Support immediate values
+}
+
+int *regRef(const char *str)
+{
+	int regNr = 0;
+	if(sscanf(str, " v%d", &regNr) == 1 && VALID_REG(regNr))
+		return &state.regs[regNr];
+	return NULL;
+}
+
+/* May blow up on bad format strings
+   (so don't provide bad format strings.) */
+int sscanrv(const char *str, const char* format, ...)
+{
+	va_list ap;
+	int fmts = 0;
+	while(*str && isspace(*str)) ++str; // Skip leading whitespace in str
+	if(!*str) return 0;
+	va_start(ap, format);
+
+	while(*format && *str)
+	{
+		switch(*format)
+		{
+			case ' ':
+				while(*str && isspace(*str))
+					++str;
+				if(!*str) goto out;
+				break;
+			case '%':
+				++format;
+				if(*format == 'r') // Reg ref
+				{
+					int *ref = regRef(str);
+					if(ref)
+					{
+						*(va_arg(ap, int**)) = ref;
+						++fmts;
+						while(*str && !isspace(*str)) ++str;
+						if(!*str) goto out;
+					}
+				}
+				else if(*format == 'v') // Reg val or imm val
+				{
+					int v = regVal(str);
+					*(va_arg(ap, int*)) = v;
+					++fmts;
+					while(*str && !isspace(*str)) ++str;
+						if(!*str) goto out;
+				}
+				break;
+			default:
+				if(*str != *format) goto out;
+				++str;
+				break;
+		}
+		++format;
+	}
+out:
+	va_end(ap);
+	return fmts;
 }
 
 void push(int what)
