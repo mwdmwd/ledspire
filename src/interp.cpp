@@ -215,6 +215,36 @@ static bool runLine(void)
 		if(sscanrv(args, "%v %v %v", &rr, &gg, &bb) == 3)
 			setRGB(rr, gg, bb);
 	}
+	CMD("add")
+	{
+		int *dest, addend;
+		if(sscanrv(args, "%r %v", &dest, &addend) == 2)
+			*dest += addend;
+	}
+	CMD("sub")
+	{
+		int *dest, subtractend; // (?)
+		if(sscanrv(args, "%r %v", &dest, &subtractend) == 2)
+			*dest -= subtractend;
+	}
+	CMD("mul")
+	{
+		int *dest, multiplicand;
+		if(sscanrv(args, "%r %v", &dest, &multiplicand) == 2)
+			*dest *= multiplicand;
+	}
+	CMD("div")
+	{
+		int *dest, denominator;
+		if(sscanrv(args, "%r %v", &dest, &denominator) == 2)
+			*dest /= denominator;
+	}
+	CMD("ld")
+	{
+		int *dest, val;
+		if(sscanrv(args, "%r %v", &dest, &val) == 2)
+			*dest = val;
+	}
 
 out:
 	state.pc += lineLen + 1;
