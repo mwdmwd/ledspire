@@ -180,7 +180,7 @@ static bool runLine(void)
 
 	strncpy(interpLine, beg, lineLen);
 	interpLine[lineLen] = 0;
-	if(interpLine[0] == ':' || interpLine[1] == '#')
+	if(interpLine[0] == ':' || interpLine[0] == '#')
 		goto out; // Label or comment
 
 	char *args;
