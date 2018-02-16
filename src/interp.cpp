@@ -209,6 +209,14 @@ static bool runLine(void)
 			block = true;
 		}
 	}
+	CMD("rand")
+	{
+		int *dest, min, max;
+		if(sscanrv(args, "%r %v %v", &dest, &min, &max) == 3)
+		{
+			*dest = rand() % (max-min+1) + min;
+		}
+	}
 	CMD("rgb")
 	{
 		int rr, gg, bb;
