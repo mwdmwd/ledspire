@@ -42,13 +42,19 @@ void setup()
 	SETUP_PIN(BLUE_PIN);
 
 	EEPROM.begin(CONF_SIZE);
+	SPIFFS.begin();
 	if(confValid())
 		confRead();
 	else
 		confWrite();
-	restoreRGB();
 
-	SPIFFS.begin();
+	if(conf.setProgRun)
+	{
+		if(loadProgram(conf.setProgName))
+			startProgram();
+	}
+	else
+		restoreRGB();
 
 	server.on("/rssi", [](void) {
 		server.send(200, "text/plain", String(WiFi.RSSI()));
@@ -65,6 +71,7 @@ void setup()
 			int ng = atoi(server.arg("g").c_str());
 			int nb = atoi(server.arg("b").c_str());
 			stopProgram(); // Let the user assume control.
+			conf.setProgRun = false;
 			setRGB(nr, ng, nb);
 			saveRGB();
 			server.send(200, "text/plain", "OK");
@@ -124,6 +131,7 @@ void setup()
 		{
 			stopProgram();
 			restoreRGB();
+			conf.setProgRun = false;
 			server.send(200);
 			return;
 		}
@@ -141,6 +149,8 @@ void setup()
 			server.send(502);
 			return;
 		}
+		strncpy(conf.setProgName, name.c_str(), 32);
+		conf.setProgRun = true;
 		server.send(200);
 	});
 
