@@ -198,6 +198,7 @@ int getLabelDest(const char *name)
 (args=&interpLine[sizeof(name)-1+strspn(&interpLine[sizeof(name)-1], " \t")]))
 
 #define JMP() do{state.pc = getLabelDest(args);goto out_noinc;}while(0)
+#define CONDJMP(name,cond) CMD(name) {if(cond){JMP();}}
 /* Returns TRUE if blocked, FALSE if another line can be ran */
 static bool runLine(void)
 {
@@ -293,10 +294,29 @@ static bool runLine(void)
 		if(sscanrv(args, "%r %v", &dest, &denominator) == 2)
 			*dest /= denominator;
 	}
+	CMD("cmp")
+	{
+		unsigned int val1, val2, res;
+		if(sscanrv(args, "%v %v", &val1, &val2) == 2)
+		{
+			res = val1 - val2;
+			state.flags.z = (val1 == val2);
+			state.flags.c = (val1 < val2);
+			state.flags.s = (res&(1<<31))?1:0;
+			state.flags.o = ((signed)res < (signed)val1) != ((signed)val2 > 0);
+		}
+	}
 	CMD("jmp")
 	{
 		JMP();
 	}
+	CONDJMP("jne", !state.flags.z)
+	CONDJMP("jge", (state.flags.s==state.flags.o || state.flags.z))
+	CONDJMP("jle", (state.flags.s!=state.flags.o || state.flags.z))
+	CONDJMP("je",  state.flags.z)
+	CONDJMP("jg",  (state.flags.s==state.flags.o && !state.flags.z))
+	CONDJMP("jl",  (state.flags.s!=state.flags.o))
+
 	CMD("ld")
 	{
 		int *dest, val;

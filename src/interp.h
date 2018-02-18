@@ -19,6 +19,18 @@ struct interpState
 	short sp;
 	int stack[STACK_SIZE];
 
+	union
+	{
+		int all;
+		struct
+		{
+			bool z:1;
+			bool c:1;
+			bool s:1;
+			bool o:1;
+		};
+	} flags;
+
 	struct
 	{
 		bool delaying;
