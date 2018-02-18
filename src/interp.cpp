@@ -194,7 +194,8 @@ int getLabelDest(const char *name)
 	return 0; //TODO raise error if not found
 }
 
-#define CMD(name) else if(!strncmp(interpLine, (name), sizeof(name)-1) && (args=&interpLine[sizeof(name)-1]))
+#define CMD(name) else if(!strncmp(interpLine, (name), sizeof(name)-1) &&\
+(args=&interpLine[sizeof(name)-1+strspn(&interpLine[sizeof(name)-1], " \t")]))
 
 #define JMP() do{state.pc = getLabelDest(args);goto out_noinc;}while(0)
 /* Returns TRUE if blocked, FALSE if another line can be ran */
