@@ -1,4 +1,6 @@
 #include "interp.h"
+#include <string.h>
+#include <ctype.h>
 #include <stdarg.h>
 #include <FS.h>
 #include "rgb.h"
@@ -208,6 +210,11 @@ static bool runLine(void)
 			state.fade.fading = true;
 			block = true;
 		}
+	}
+	CMD("stop")
+	{
+		stopProgram();
+		block = true;
 	}
 	CMD("rand")
 	{
