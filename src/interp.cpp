@@ -282,6 +282,18 @@ static bool runLine(void)
 		if(sscanrv(args, "%r %v", &dest, &subtractend) == 2)
 			*dest -= subtractend;
 	}
+	CMD("inc")
+	{
+		int *dest;
+		if(sscanrv(args, "%r", &dest) == 1)
+			++*dest;
+	}
+	CMD("dec")
+	{
+		int *dest;
+		if(sscanrv(args, "%r", &dest) == 1)
+			--*dest;
+	}
 	CMD("mul")
 	{
 		int *dest, multiplicand;
