@@ -168,7 +168,35 @@ int pop(void)
 		; // TODO stack underflow error
 }
 
+int nextLinePos(int lpos)
+{
+	char *nextNl = strchr(&state.prog[lpos], '\n');
+	if(!nextNl) return 0;
+	return (nextNl - state.prog) + 1;
+}
+
+int getLabelDest(const char *name)
+{
+	int pos, nlen = strlen(name);
+	char *lb = state.prog;
+
+	while(lb)
+	{
+		lb = strchr(lb, ':');
+		if(!lb) break;
+		if(lb[-1] == '\n' || lb == state.prog) // At start of line
+		{
+			if(!strncmp(&lb[1], name, nlen))
+				return nextLinePos(lb-state.prog);
+		}
+		++lb;
+	}
+	return 0; //TODO raise error if not found
+}
+
 #define CMD(name) else if(!strncmp(interpLine, (name), sizeof(name)-1) && (args=&interpLine[sizeof(name)-1]))
+
+#define JMP() do{state.pc = getLabelDest(args);goto out_noinc;}while(0)
 /* Returns TRUE if blocked, FALSE if another line can be ran */
 static bool runLine(void)
 {
@@ -254,6 +282,10 @@ static bool runLine(void)
 		if(sscanrv(args, "%r %v", &dest, &denominator) == 2)
 			*dest /= denominator;
 	}
+	CMD("jmp")
+	{
+		JMP();
+	}
 	CMD("ld")
 	{
 		int *dest, val;
@@ -265,5 +297,6 @@ out:
 	state.pc += lineLen + 1;
 	if(state.pc >= state.progLen)
 		state.pc = 0;
+out_noinc:
 	return block;
 } 
