@@ -253,6 +253,16 @@ static bool runLine(void)
 			*dest = rand() % (max-min+1) + min;
 		}
 	}
+	CMD("call")
+	{
+		push(nextLinePos(state.pc));
+		JMP();
+	}
+	CMD("ret")
+	{
+		state.pc = pop();
+		goto out_noinc;
+	}
 	CMD("rgb")
 	{
 		int rr, gg, bb;
