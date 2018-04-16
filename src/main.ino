@@ -176,6 +176,7 @@ void loop()
 		WiFi.disconnect();
 		delay(5000);
 		WiFi.begin();
+		unsigned long beginMillis = millis();
 		while(true)
 		{
 			delay(50);
@@ -187,6 +188,8 @@ void loop()
 				restoreRGB(); // Restore color
 				break;
 			}
+			else if(millis() - beginMillis >= 30000)
+				ESP.reset(); // Give up after 30s of trying to connect
 		}
 	}
 
