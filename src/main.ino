@@ -22,6 +22,7 @@ void setup()
 	SETUP_PIN(GREEN_PIN);
 	Serial.begin(115200);
 	WiFi.mode(WIFI_STA);
+	WiFi.hostname("ledspire");
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 	WiFi.setAutoReconnect(false);
 	WiFi.setSleepMode(WIFI_NONE_SLEEP);
