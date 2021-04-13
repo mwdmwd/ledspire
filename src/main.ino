@@ -22,7 +22,7 @@ void setup()
 	SETUP_PIN(GREEN_PIN);
 	Serial.begin(115200);
 	WiFi.mode(WIFI_STA);
-	WiFi.hostname("ledspire");
+	WiFi.hostname(HOSTNAME);
 	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
 	WiFi.setAutoReconnect(false);
 	WiFi.setSleepMode(WIFI_NONE_SLEEP);
@@ -163,7 +163,7 @@ void setup()
 	server.serveStatic("/", SPIFFS, "/www/");
 	server.begin();
 
-	ArduinoOTA.setHostname("ledspire");
+	ArduinoOTA.setHostname(HOSTNAME);
 	ArduinoOTA.onStart([](void) {
 		SPIFFS.end();
 	});
