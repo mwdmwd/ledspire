@@ -1,0 +1,11 @@
+ld v0 10
+rgb 0 0 0
+:again
+rgb 255 255 255
+wait 250
+rgb 0 0 0
+wait 250
+sub v0 1
+cmp v0 0
+jg again
+stop

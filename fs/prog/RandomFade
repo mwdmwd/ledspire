@@ -1,0 +1,8 @@
+ld v3 40
+ld v4 150
+#time
+rand v5 1750 2250
+rand v0 v3 v4
+rand v1 v3 v4
+rand v2 v3 v4
+fade v0 v1 v2 v5

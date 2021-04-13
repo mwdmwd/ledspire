@@ -8,3 +8,7 @@ src/wifi_creds.h
 /config.target.mk
 fs/prog/*
 !fs/prog/RGB
+!fs/prog/10blinks
+!fs/prog/RandomFade
+!fs/prog/sos_nosubr
+!fs/prog/sos

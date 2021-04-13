@@ -1,0 +1,42 @@
+ld v0 500
+#v0 <- dot time [ms]
+ld v1 v0
+mul v1 3
+#v1 <- 3*v0 dash time
+ld v2 v0
+mul v2 7
+#v2 <- delay between repeats
+ld v3 100
+#v3 <- R brightness
+ld v4 0
+#v4 <- G brightness
+ld v5 150
+#v5 <- B brightness
+:start
+call .
+call .
+call .
+call -
+call -
+call -
+call .
+call .
+call .
+wait v2
+jmp start
+
+:.
+rgb v3 v4 v5
+wait v0
+rgb 0 0 0
+wait v0
+ret
+:-
+rgb v3 v4 v5
+wait v1
+rgb 0 0 0
+wait v0
+ret
+:o
+wait v1
+ret
