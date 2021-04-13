@@ -20,8 +20,9 @@ function chg() {
 	preview.style.backgroundColor = `rgb(${r.value}, ${g.value}, ${b.value})`;
 }
 function load() {
-	var x = new XMLHttpRequest();
+	var x = new XMLHttpRequest(), y = new XMLHttpRequest();
 	x.open("GET", "/c", true);
+	y.open("GET", "/prog", true);
 	x.onload = function() {
 		preview.style.backgroundColor = `rgb(${x.responseText})`;
 		for(var i = 0; i < 3; ++i)
@@ -29,7 +30,73 @@ function load() {
 			document.getElementById("rgb"[i]).value = x.responseText.split(',')[i]|0;
 		}
 	};
+	y.onload = function() {
+		var progs = y.responseText.split("\n");
+		progs.forEach(function(x) {
+			addopt(x);
+		});
+	}
 	x.send(null);
+	y.send(null);
+}
+function loadprog() {
+	var x = new XMLHttpRequest();
+	x.open("GET", "/prog/"+progname.value, true);
+	showovl();
+	x.onload = function() {
+		prog.value = x.responseText;
+		hideovl();
+	}
+	x.send(null);
+}
+function save() {
+	var x = new XMLHttpRequest();
+	x.open("POST", "/prog?name="+progname.value, true);
+	x.setRequestHeader("Content-Type", "text/plain");
+	showovl();
+	x.onload = hideovl;
+	x.send(prog.value);
+}
+function addopt(name) {
+	var opt = document.createElement("option");
+	opt.innerText = opt.value = name;
+	progname.options.add(opt);
+}
+function newprog() {
+	var name = prompt("Podaj nazwę");
+	if(!name) return;
+	addopt(name);
+	progname.selectedIndex = progname.options.length - 1;
+}
+function delprog() {
+	if(!progname.value || !confirm(`Czy na pewno chcesz usunąć:\n${progname.value}?`))
+		return;
+	var x = new XMLHttpRequest();
+	x.open("DELETE", "/prog?name="+progname.value, true);
+	showovl();
+	x.onload = hideovl;
+	x.send(null);
+	progname.options.remove(progname.selectedIndex);
+}
+function run() {
+	var x = new XMLHttpRequest();
+	x.open("GET", "/progctl?name="+progname.value, true);
+	showovl();
+	x.onload = hideovl;
+	x.send(null);
+}
+function stop() {
+	var x = new XMLHttpRequest();
+	x.open("GET", "/progctl?act=stop", true);
+	showovl();
+	x.onload = hideovl;
+	x.send(null);
+}
+function showovl() {
+	pdoverlay.style.display = "";
+}
+function hideovl() {
+	pdoverlay.style.display = "none";
 }
 document.addEventListener("DOMContentLoaded", load);
 </script>
@@ -43,5 +110,19 @@ B: <input id="b" type="range" style="width: 100%; margin:0" min="0" max="255" va
 <br/>
 <a href="/rssi">RSSI</a>
 <br/>
+<div id="progdiv" style="position: relative">
+	<div id="pdoverlay" style="position: absolute; top:0;right:0;bottom:0;left:0; background-color: rgba(180, 180, 180, 0.5); display: none; font-size:72pt;">Czekaj...</div>
+	<button onclick="loadprog()">Wczytaj</button>
+	<button onclick="save()">Zapisz</button>
+	<button onclick="newprog()">Nowy...</button>
+	<button onclick="delprog()" style="color: red; font-weight: bold">Usuń</button>
+	Nazwa:
+	<select id="progname"></select>
+	<br/>
+	<textarea style="width: 50%;height:200px" id="prog"></textarea>
+	<br/>
+	<button onclick="run()">Uruchom</button>
+	<button onclick="stop()">Stop</button>
+</div>
 </body>
 </html>
