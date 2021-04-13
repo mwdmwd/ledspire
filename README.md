@@ -1,7 +1,7 @@
 # ledspire
-Programmable LED driver with ESP8266/Arduino.
+Programmable LED strip controller with ESP8266/Arduino.
 
-Example programs are in `fs/progs`.
+Example programs are in `fs/prog`.
 
 There are 10 registers: v0 through v9. Command reference (`:r` means a register, `:v` means a register or an immediate value):
 
