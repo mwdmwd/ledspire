@@ -1,0 +1,6 @@
+BOARD = nodemcuv2
+FLASH_DEF = 4M1M
+
+UPLOAD_SPEED = 256000
+UPLOAD_PORT = /dev/ttyUSB1
+OTA_ADDR = ledspire.local
