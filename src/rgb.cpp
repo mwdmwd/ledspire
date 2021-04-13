@@ -14,8 +14,6 @@ void setRGB(int nr, int ng, int nb)
 	CLAMP(nr, 0, 255);
 	CLAMP(ng, 0, 255);
 	CLAMP(nb, 0, 255);
-	nr = nr*232 / 255;
-	ng = ng*194 / 255;
 	if(r != nr)
 	{
 		analogWrite(RED_PIN, gammaCorr8to16(nr)); r = nr;
